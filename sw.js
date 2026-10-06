@@ -1,6 +1,6 @@
 'use strict';
 const CACHE_PREFIX='stride-nozzle-'+self.registration.scope+'-';
-const CACHE=CACHE_PREFIX+'v2';
+const CACHE=CACHE_PREFIX+'v3';
 const SHELL=['./','./index.html','./styles.css','./calc.js','./app.js','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/maskable-512.png'];
 const allowed=new Set(SHELL.map(path=>new URL(path,self.registration.scope).href));
 self.addEventListener('install',event=>{event.waitUntil((async()=>{const cache=await caches.open(CACHE);const responses=await Promise.all(SHELL.map(async path=>{const request=new Request(new URL(path,self.registration.scope),{cache:'reload',credentials:'same-origin'});const response=await fetch(request);if(!response.ok||response.type==='opaque'||new URL(response.url).origin!==self.location.origin)throw new Error('App shell unavailable');if(path==='./'||path==='./index.html'){const html=await response.clone().text();if(!html.includes('id="flow-chart"'))throw new Error('Calculator page unavailable');}return [request,response];}));await Promise.all(responses.map(([request,response])=>cache.put(request,response)));await self.skipWaiting();})());});

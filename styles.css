@@ -3,3 +3,5 @@
 /* Keep the named target easy to find in the reference chart. */
 th.target-thousand{box-shadow:inset 0 -4px 0 var(--teal)}
 @media(max-width:760px){.presets button{flex:1 1 28%}.topbar .quiet-button{flex-shrink:0}.brand h1{max-width:220px;line-height:1.2}}
+
+.nozzle-shopping{margin-top:18px;font-size:.9rem}.nozzle-shopping p{margin:10px 0}.nozzle-spec{color:var(--teal)}.nozzle-product-link{display:inline-flex;align-items:center;justify-content:center;min-height:46px;margin-top:14px;padding:10px 16px;background:var(--teal);color:#fff;border-radius:9px;font-weight:700;text-decoration:underline;text-underline-offset:3px}.nozzle-product-link:focus-visible{outline:3px solid var(--ink);outline-offset:3px}.nozzle-shopping .field-help{margin-bottom:0}
