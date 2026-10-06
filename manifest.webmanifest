@@ -1,0 +1,33 @@
+{
+  "id": "./",
+  "name": "Stride Nozzle Calculator",
+  "short_name": "Stride Nozzles",
+  "description": "Choose nozzle sizes or check estimated pressure from machine flow and equal tips.",
+  "lang": "en",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f1f4f6",
+  "theme_color": "#ffc247",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

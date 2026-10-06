@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffc247"><meta name="description" content="Convert machine flow and target pressure into nozzle size, or check the pressure from your existing tips. Works offline after the app is cached.">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Stride Nozzle Calculator</title>
+<link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./icons/icon-192.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ffc247'/%3E%3Cpath d='M17 18h30v12L35 42h-6L17 30z' fill='%23132735'/%3E%3Cpath d='M23 46l-5 9m14-9v10m9-10l5 9' stroke='%23132735' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="./styles.css">
+<script defer src="./calc.js"></script><script defer src="./app.js"></script>
+</head>
+<body>
+<header class="topbar"><div class="brand"><svg aria-hidden="true" viewBox="0 0 40 40"><path d="M9 6h22v9L23 25h-6L9 15z"/><path class="spray" d="M13 29l-4 6m11-6v7m7-7l4 6"/></svg><h1>Stride Nozzle Calculator</h1></div><button id="install-open" class="quiet-button" type="button">Install app</button></header>
+<main>
+<div class="workspace">
+<section class="machine panel" aria-labelledby="machine-heading">
+<div class="section-heading"><h2 id="machine-heading">Your machine</h2><button class="text-button" id="reset" type="button">Reset</button></div>
+<div class="machine-fields">
+<div class="flow-field"><label for="flow">Machine flow</label><div class="joined"><input id="flow" type="number" inputmode="decimal" min="0.01" step="any" value="15"><select id="flow-unit" aria-label="Machine flow unit"><option value="lpm">L/min</option><option value="gpm">US GPM</option></select></div><p id="flow-conversion" class="field-help">15 L/min = 3.963 US GPM</p></div>
+<div><label for="count">Number of tips</label><input id="count" type="number" inputmode="numeric" min="1" max="12" step="1" value="2"><p class="field-help">Equal-sized tips on the bar</p></div>
+<div><label for="maximum">Machine maximum <span>PSI</span></label><input id="maximum" type="number" inputmode="numeric" min="1" step="any" value="4000"></div>
+</div>
+<p class="machine-note">Use the rated flow available at the operating pressure.</p>
+</section>
+<section class="calculator" aria-label="Nozzle calculator">
+<div class="mode-tabs" role="tablist" aria-label="Calculation mode"><button id="choose-tab" type="button" role="tab" aria-selected="true" aria-controls="calculation-panel">Choose pressure</button><button id="check-tab" type="button" role="tab" aria-selected="false" aria-controls="calculation-panel" tabindex="-1">Check my tips</button></div>
+<div id="calculation-panel" role="tabpanel" aria-labelledby="choose-tab" class="panel calculation-panel">
+<div id="target-field"><label for="target">Pressure you want <span>PSI</span></label><input id="target" class="focus-input" type="number" inputmode="numeric" min="1" step="any" value="1000"><div class="presets" aria-label="Quick target pressures"><button type="button" data-pressure="1000" aria-pressed="true">1,000 PSI</button><button type="button" data-pressure="1500">1,500</button><button type="button" data-pressure="2000">2,000</button><button type="button" data-pressure="2500">2,500</button><button type="button" data-pressure="3000">3,000</button><button type="button" data-pressure="4000">4,000</button></div></div>
+<div id="tip-field" hidden><label for="tip">Size of each tip</label><input id="tip" class="focus-input" type="text" inputmode="decimal" value="025" aria-describedby="tip-help"><p id="tip-help" class="field-help">Enter 2.5 or 025. Both mean size #2.5 per tip.</p></div>
+<div id="validation-error" class="error-message" role="alert" hidden></div>
+<div id="answer" aria-live="polite" aria-atomic="true"></div>
+</div>
+<div id="nearby" class="nearby"></div>
+</section>
+</div>
+<section class="reference-section panel" aria-labelledby="comparison-heading">
+<div class="section-heading"><div><h2 id="comparison-heading">Compare tip sizes</h2><p class="muted" id="comparison-description">Estimated pressure using your machine and 2 equal tips.</p></div><span class="small-label">PER TIP</span></div>
+<div id="comparison-list"></div>
+<details id="all-sizes"><summary>Show the full tip-size list</summary><div id="full-list"></div></details>
+<p class="field-help">These are comparison sizes, not a stock list. Confirm the manufacturer offers the size, thread and spray angle your cleaner requires.</p>
+</section>
+<details class="panel chart-section"><summary>Flow × pressure chart <span>Includes a 1,000 PSI column</span></summary><div class="detail-content"><p>Find the machine flow on the left and target pressure across the top. Every cell is the <strong>combined nozzle size</strong>. Divide it by your number of tips.</p><p id="chart-example" class="chart-example"></p><p class="field-help">Swipe across the table. Values are calculated and rounded to 2 decimals; a printed chart may round to a listed size. Columns above your machine maximum are marked †.</p><div class="table-scroll" tabindex="0" role="region" aria-label="Combined nozzle size chart; scroll horizontally"><table id="flow-chart"></table></div></div></details>
+<details class="panel help-section"><summary>How to read this & important checks</summary><div class="detail-content help-grid"><div><h3>Flow, pressure and nozzle size</h3><p><strong>L/min or US GPM</strong> is water flow. <strong>PSI</strong> is pressure. <strong>#2.5</strong> is nozzle size, not 2.5 GPM from each tip.</p><p>A size #2.5 nozzle passes 2.5 US GPM at 4,000 PSI. At a different pressure it passes a different flow.</p><p>Two #2.5 tips make a combined size of #5.0. A three-digit size code <strong>025 means #2.5</strong>; 020 means #2.0, 035 means #3.5 and 040 means #4.0. A full spray-tip marking can also include the angle; enter only the size part.</p></div><div><h3>Estimates, not a pressure rating</h3><p>The calculation assumes the full entered flow reaches equal, unworn tips. Hose losses, wear, pump behaviour and the unloader can change actual pressure. Check with a suitable gauge and the equipment instructions.</p><p>Pressure above the machine maximum is an <strong>unachievable theoretical demand</strong> at the entered flow, not a prediction that the washer can produce it. Use a suitable larger orifice.</p><p>Low pressure may stop a surface-cleaner bar spinning. Follow its minimum-flow, nozzle and pressure specifications. Never exceed the lowest rating of any component.</p><p>This calculator does not establish a safe cleaning pressure for sealed concrete or any other surface.</p></div><div><h3>The calculation</h3><p>Combined size = US GPM × √(4,000 ÷ PSI)<br>Each tip = combined size ÷ number of tips<br>PSI = 4,000 × (US GPM ÷ combined size)²</p><p>1 US gallon = 3.785411784 litres. Your settings stay in this browser on this device.</p><p>Formula and sizing references: <a href="https://www.catpumps.com/dynamic-literature/high-pressure-design-guide" target="_blank" rel="noopener noreferrer">Cat Pumps design guide</a> · <a href="https://www.generalpump.com/wp-content/uploads/2025/10/Nozzle-Chart-2025.pdf" target="_blank" rel="noopener noreferrer">General Pump nozzle chart</a>.</p></div></div></details>
+<footer><span id="offline-status" role="status">Preparing offline app…</span><button id="install-footer" class="text-button" type="button">Add to home screen</button></footer>
+</main>
+<dialog id="install-dialog" aria-labelledby="install-title"><div class="dialog-heading"><h2 id="install-title">Put it on your home screen</h2><button id="close-install" class="quiet-button" type="button" aria-label="Close installation instructions">Close</button></div><p id="install-state">Open this site in your phone’s browser first.</p><button id="native-install" class="primary-button" type="button" hidden>Install Stride Nozzle Calculator</button><h3>Android · Chrome</h3><p>Open the browser menu (⋮), choose <strong>Add to home screen</strong>, then <strong>Install</strong> if offered.</p><h3>iPhone · Safari</h3><p>Tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>.</p><p class="field-help">Sign in to view this private site if prompted. Offline use is ready only when the app says “Ready for offline use”. Browser or private-site restrictions can prevent installation or offline caching. Your first visit needs internet.</p></dialog>
+<noscript><p class="error-message">Enable JavaScript to use the calculator.</p></noscript>
+</body></html>
